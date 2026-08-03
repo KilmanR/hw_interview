@@ -39,7 +39,8 @@ class EmailClient:
             mail.select('inbox')
             criterion = '(HEADER Subject "%s")' % header if header else 'ALL'
             _, data = mail.uid('search', None, criterion)
-            assert data[0], 'There are no letters with current header'
+            if not data[0]:
+                raise ValueError('There are no letters with current header')
             latest_email_uid = data[0].split()[-1]
             _, data = mail.uid('fetch', latest_email_uid, '(RFC822)')
             raw_email = data[0][1]
